@@ -1,0 +1,165 @@
+export default class View {
+    static colors = {
+        1: 'blue',
+        2: 'purple',
+        3: 'yellow',
+        4: 'green',
+        5: 'cyan',
+        6: 'red',
+        7: 'pink'
+    }
+
+    constructor(element, width, height, rows, columns) {
+        // this.element = element
+        this.width = width
+        this.height = height
+
+        this.canvas = document.createElement('canvas')
+        this.canvas.width = width
+        this.canvas.height = height
+        this.context = this.canvas.getContext('2d')
+//высчитываем ширину и высоту, учитывая рамки
+        //width of border
+        this.playfeildBorderWidth = 6
+        //position of the top left edge of playfield
+        this.playfeildX = this.playfeildBorderWidth / 2 //was without /2
+        this.playfeildY = this.playfeildBorderWidth /2  //was without /2
+        //playfild size with borders
+        this.playfeildWidth = width * 2 / 3
+        this.playfeildHeight = height
+        //playfield size without borders
+        this.playfeildInerWidth = this.playfeildWidth - this.playfeildBorderWidth //was with *2
+        this.playfeildInerHeight = this.playfeildHeight - this.playfeildBorderWidth //was with *2
+        //blocks size considering our 'clear' size of playfield
+        this.blockWidth = this.playfeildInerWidth / columns
+        this.blockHeight = this.playfeildInerHeight / rows
+//dispose(располагать) panel to the left (after left border of playfield)
+        //position of the panel
+        this.panelX = this.playfeildWidth + 10
+        this.panelY = 0
+        this.panelWidth = this.width / 3
+        this.panelHeight = this.height
+
+        element.appendChild(this.canvas)
+    }
+    renderMainScreen(state) {
+        //clear all our scene
+        this.cleanScreen()
+        this.renderPlayfeild(state)
+        this.renderPanel(state)
+    }
+
+    renderStartScreen(){
+        const cnt = this.context
+        cnt.font = '18px "Press Start 2P"'
+        cnt.textAlign = "center"
+        cnt.fillStyle = 'white'
+        cnt.textBaseline = 'middle'
+        cnt.fillText('Press ENTER to start',this.width / 2, this.height / 2)
+    }
+    renderPauseScreen(){
+        const cnt = this.context
+
+        cnt.fillStyle = 'rgba(0,0,0,.2)'
+        cnt.fillRect(0,0,this.width,this.height)
+
+        cnt.font = '18px "Press Start 2P"'
+        cnt.textAlign = "center"
+        cnt.fillStyle = 'white'
+        cnt.textBaseline = 'middle'
+        cnt.fillText('Press ENTER to resume',this.width / 2, this.height / 2)
+    }
+    renderGameOverScreen(score){
+        this.cleanScreen()
+        const cnt = this.context
+
+        cnt.fillStyle = 'rgba(0,0,0,.2)'
+        cnt.fillRect(0,0,this.width,this.height)
+
+        cnt.font = '18px "Press Start 2P"'
+        cnt.textAlign = "center"
+        cnt.fillStyle = 'white'
+        cnt.textBaseline = 'middle'
+        cnt.fillText('GAME OVER',this.width / 2, this.height / 2-48)
+        cnt.fillText(`Score: ${score}`,this.width / 2, this.height / 2)
+        cnt.fillText('Press Space to try again',this.width / 2, this.height / 2 + 48)
+    }
+
+    renderPlayfeild({newPlayfield: playfield}) {
+        // render new playfield
+        for (let y = 0; y < playfield.length; y++) {
+            for (let x = 0; x < playfield[y].length; x++) {
+                if (playfield[y][x]) {
+                    this.renderBlock(
+                        this.playfeildX + x * this.blockWidth,
+                        this.playfeildY + y * this.blockHeight,
+                        this.blockWidth,
+                        this.blockHeight,
+                        View.colors[playfield[y][x]])
+                }
+            }
+        }
+        const cnt = this.context
+        cnt.strokeStyle = '#000'
+        cnt.lineWidth = this.playfeildBorderWidth
+        //render border for all canvas
+        cnt.strokeRect(0,0,this.width,this.height)
+        //old version : only for playfield
+        // cnt.strokeRect(0,0,this.playfeildWidth,this.playfeildHeight)
+    }
+
+    renderPanel({level, score, lines, nextPiece}) {
+        const cnt = this.context
+        //fill our panel with color
+        cnt.fillStyle ='#269DA3' //border color
+        //render background of the panel
+        cnt.fillRect(this.playfeildWidth -this.playfeildBorderWidth /3,this.panelY+ this.playfeildBorderWidth /2, this.panelWidth ,this.panelHeight - this.playfeildBorderWidth)
+        //old version :
+        // cnt.fillRect(this.playfeildWidth,this.panelY, this.width,this.height)
+
+        cnt.textAlign = 'start'
+        cnt.textBaseline = 'top'
+//H1 for panel
+        cnt.font = '24px "Press Start 2P"'
+        //fillText measure from left bottom edge
+        for (let i = 0; i < 'TETRIS'.length +1; i++) {
+            console.log('TETRIS'[i])
+            cnt.fillStyle = View.colors[i]
+            //i * font-size
+            cnt.fillText('TETRIS'[i - 1], this.panelX + i * 24, this.panelY+ 24)
+        }
+        //for other text
+        cnt.font = '18px "Press Start 2P"'
+        cnt.fillStyle = 'black'
+        cnt.fillText(`Level: ${Math.ceil(level)}`, this.panelX, this.panelY+ 72)
+        cnt.fillText(`Score: ${score}`, this.panelX, this.panelY + 120)
+        cnt.fillText(`Lines: ${lines}`, this.panelX, this.panelY + 168)
+        cnt.fillText('Next', this.panelX, this.panelY + 216)
+        //dispose next figure below the string 'Next' and reduce by 2 times(уменьшаем в 2 раза)
+        for (let y = 0; y < nextPiece.blocks.length; y++) {
+            for (let x = 0; x < nextPiece.blocks[y].length; x++) {
+                if (nextPiece.blocks[y][x]) {
+                    this.renderBlock(
+                        this.panelX + (x * this.blockWidth * .5), //на одном уровне с 'Next'
+                        250+ this.panelY + (y * this.blockHeight) * .5,
+                        this.blockWidth * .5,
+                        this.blockHeight * .5,
+                        View.colors[nextPiece.blocks[y][x]]
+                    )
+                }
+            }
+        }
+    }
+
+    renderBlock(x, y, width, height, color = 'red') {
+        this.context.fillStyle = color
+        this.context.strokeStyle = 'black'
+        this.context.lineWidth = 2
+        //fillRect measure from left top edge
+        this.context.fillRect(x, y, width, height)
+        this.context.strokeRect(x, y, width, height)
+    }
+    cleanScreen(){
+        this.context.clearRect(0, 0, this.width, this.height)
+    }
+}

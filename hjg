@@ -1,0 +1,147 @@
+export default class View {
+    static colors = {
+        0: 'cyan',
+        1: 'blue',
+        2: 'pink',
+        3: 'yellow',
+        4: 'green',
+        5: 'purple',
+        6: 'red'
+    }
+
+    constructor(element, width, height, rows, columns) {
+        this.element = element
+        this.width = width
+        this.height = height
+
+        this.canvas = document.createElement('canvas')
+        this.canvas.width = this.width
+        this.canvas.height = this.height
+        this.context = this.canvas.getContext('2d')
+
+        this.playfeildBorderWidth = 4
+        this.playfeildX = this.playfeildBorderWidth
+        this.playfeildY = this.playfeildBorderWidth
+        this.playfeildWidth = width * 2 / 3
+        this.playfeildHeight = height
+        this.playfeildInerWidth = this.playfeildWidth - this.playfeildBorderWidth * 2
+        this.playfeildInerHeight = this.playfeildHeight - this.playfeildBorderWidth * 2
+
+        this.blockWidth = this.playfeildInerWidth / columns
+        this.blockHeight = this.playfeildInerHeight / rows
+
+        this.panelX = this.playfeildWidth + 10
+        this.panelY = 0
+        this.panelWidth = this.width / 3
+        this.panelHeight = this.height
+
+        this.element.appendChild(this.canvas)
+    }
+    renderMainScreen(state) {
+        //clear all our scene
+        this.cleanScreen()
+        this.renderPlayfeild(state)
+        this.renderPanel(state)
+    }
+
+    renderStartScreen(){
+        const cnt = this.context
+        cnt.font = '18px "serif"'
+        cnt.textAlign = "center"
+        cnt.fillStyle = 'white'
+        cnt.textBaseline = 'middle'
+        cnt.fillText('Press ENTER to start',this.width / 2, this.height / 2)
+    }
+    renderPauseScreen(){
+        const cnt = this.context
+
+        cnt.fillStyle = 'rgba(0,0,0,.2)'
+        cnt.fillRect(0,0,this.width,this.height)
+
+        cnt.font = '18px "serif"'
+        cnt.textAlign = "center"
+        cnt.fillStyle = 'white'
+        cnt.textBaseline = 'middle'
+        cnt.fillText('Press ENTER to resume',this.width / 2, this.height / 2)
+    }
+    renderGameOverScreen(score){
+        this.cleanScreen()
+        const cnt = this.context
+
+        cnt.fillStyle = 'rgba(0,0,0,.2)'
+        cnt.fillRect(0,0,this.width,this.height)
+
+        cnt.font = '18px "serif"'
+        cnt.textAlign = "center"
+        cnt.fillStyle = 'white'
+        cnt.textBaseline = 'middle'
+        cnt.fillText('GAME OVER',this.width / 2, this.height / 2-48)
+        cnt.fillText(`Score: ${score}`,this.width / 2, this.height / 2)
+        cnt.fillText('Press Space to try again',this.width / 2, this.height / 2 + 48)
+    }
+
+
+    renderPlayfeild({newPlayfield: playfield}) {
+        // render new playfield
+        for (let y = 0; y < playfield.length; y++) {
+            for (let x = 0; x < playfield[y].length; x++) {
+                if (playfield[y][x]) {
+                    this.renderBlock(
+                        this.playfeildX + x * this.blockWidth,
+                        this.playfeildY + y * this.blockHeight,
+                        this.blockWidth,
+                        this.blockHeight,
+                        View.colors[playfield[y][x]])
+                }
+            }
+        }
+        const cnt = this.context
+        cnt.strokeStyle = '#349c8e'
+        cnt.lineWidth = this.playfeildBorderWidth
+        cnt.strokeRect(0,0,this.playfeildWidth,this.playfeildHeight)
+    }
+
+    renderPanel({level, score, lines, nextPiece}) {
+        const cnt = this.context
+
+        cnt.fillStyle ='#349c8e'
+        cnt.fillRect(this.playfeildWidth,this.panelY, this.width,this.height)
+
+        cnt.textAlign = 'start'
+        cnt.textBaseline = 'top'
+        cnt.fillStyle = 'black'
+        cnt.font = '14px "Press Start 2P"'
+
+
+        cnt.fillText(`Level: ${level}`, this.panelX, this.panelY)
+        cnt.fillText(`Score: ${score}`, this.panelX, this.panelY + 24)
+        cnt.fillText(`Lines: ${lines}`, this.panelX, this.panelY + 48)
+        cnt.fillText('Next', this.panelX, this.panelY + 96)
+
+        for (let y = 0; y < nextPiece.blocks.length; y++) {
+            for (let x = 0; x < nextPiece.blocks[y].length; x++) {
+                if (nextPiece.blocks[y][x]) {
+                    this.renderBlock(
+                        this.panelX + (x * this.blockWidth * .5),
+                        100+ this.panelY + (y * this.blockHeight) * .5,
+                        this.blockWidth * .5,
+                        this.blockHeight * .5,
+                        View.colors[nextPiece.blocks[y][x]]
+                    )
+                }
+            }
+        }
+    }
+
+    renderBlock(x, y, width, height, color = 'red') {
+        this.context.fillStyle = color
+        this.context.strokeStyle = 'black'
+        this.context.lineWidth = 2
+
+        this.context.fillRect(x, y, width, height)
+        this.context.strokeRect(x, y, width, height)
+    }
+    cleanScreen(){
+        this.context.clearRect(0, 0, this.width, this.height)
+    }
+}
