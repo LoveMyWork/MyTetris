@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="favicon.ico">
+</head>
+<body>
+<button class="change-theme change-theme--dark" id="change-theme" data-theme="dark"></button>
+<div class="overlay" id="overlay"></div>
+<div class="burger" >
+    <div class="menu__btn"  id="burger" data-overlay="true">
+        <span data-overlay="true"></span>
+    </div>
+</div>
+<div class="wrapper">
+    <div id="results" class="results" data-overlay="true">
+        <p class="motivation">Play your game,baby</p>
+        <form id="form1" data-overlay="true">
+            <label class="auth-label" for="inp" data-overlay="true">Write your name in english </label>
+            <input type="text" id="inp" pattern="^[a-zA-Z]+$" data-overlay="true" placeholder="Name">
+            <input type="submit" data-overlay="true" value="Send"></form>
+
+    </div>
+    <div id="root" class="root"></div>
+</div>
+</body>
+</html>
