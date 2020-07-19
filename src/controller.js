@@ -1,5 +1,5 @@
 import Database from "./database.js";
-
+import './styles/style.css'
 export default class Controller {
     constructor(game, view, database) {
         this.isPlaying = false
@@ -30,7 +30,6 @@ export default class Controller {
                 date: new Date().toJSON()
             })
         }
-
     }
 
 // play and pause

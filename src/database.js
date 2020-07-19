@@ -1,6 +1,6 @@
 export default class Database {
     static create(scoreWithTime){
-        return fetch('https://tetris-17-07-20.firebaseio.com/results.json',{
+        return fetch(`https://tetris-17-07-20.firebaseio.com/results/${window.userName || 'unknownUser'}.json`,{
             method:'POST',
             body:JSON.stringify(scoreWithTime),
             headers:{
@@ -24,7 +24,7 @@ function toLocalStorage(result){
     console.log(result)
     const results = fromLocalStorage()
     console.log(results)
-    results.push(result)
+    results.unshift(result)
     localStorage.setItem('results',JSON.stringify(results))
 }
 function fromLocalStorage(){

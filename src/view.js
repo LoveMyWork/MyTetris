@@ -1,13 +1,16 @@
+
+
+const colors = {
+    1: 'blue',
+    2: 'purple',
+    3: 'yellow',
+    4: 'green',
+    5: 'cyan',
+    6: 'red',
+    7: 'pink'
+}
 export default class View {
-    static colors = {
-        1: 'blue',
-        2: 'purple',
-        3: 'yellow',
-        4: 'green',
-        5: 'cyan',
-        6: 'red',
-        7: 'pink'
-    }
+
 
     constructor(element, width, height, rows, columns) {
         // this.element = element
@@ -51,10 +54,10 @@ export default class View {
 
     renderStartScreen(){
         const cnt = this.context
-        cnt.font = '18px "Press Start 2P"'
         cnt.textAlign = "center"
         cnt.fillStyle = 'white'
         cnt.textBaseline = 'middle'
+        cnt.font = '18px "Press Start 2P"'
         cnt.fillText('Press ENTER to start',this.width / 2, this.height / 2)
     }
     renderPauseScreen(){
@@ -95,7 +98,7 @@ export default class View {
                         this.playfeildY + y * this.blockHeight,
                         this.blockWidth,
                         this.blockHeight,
-                        View.colors[playfield[y][x]])
+                        colors[playfield[y][x]])
                 }
             }
         }
@@ -124,7 +127,7 @@ export default class View {
         //fillText measure from left bottom edge
         for (let i = 0; i < 'TETRIS'.length +1; i++) {
             console.log('TETRIS'[i])
-            cnt.fillStyle = View.colors[i]
+            cnt.fillStyle = colors[i]
             //i * font-size
             cnt.fillText('TETRIS'[i - 1], this.panelX + i * 24, this.panelY+ 24)
         }
@@ -144,7 +147,7 @@ export default class View {
                         250+ this.panelY + (y * this.blockHeight) * .5,
                         this.blockWidth * .5,
                         this.blockHeight * .5,
-                        View.colors[nextPiece.blocks[y][x]]
+                        colors[nextPiece.blocks[y][x]]
                     )
                 }
             }

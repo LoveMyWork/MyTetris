@@ -1,3 +1,9 @@
+const scoreLines = {
+    1: 20,
+    2: 50,
+    3: 80,
+    4: 100
+}
 export default class Game {
     // score = 0;
     // lines = 0;
@@ -11,12 +17,7 @@ export default class Game {
         this.resetProperties()
     }
 
-    scoreLines = {
-        1: 20,
-        2: 50,
-        3: 80,
-        4: 100
-    }
+
 
     resetProperties() {
         this.score = 0;
@@ -269,7 +270,7 @@ export default class Game {
         if (lines) {
             //get score points in scoreLines
             //level + 1 because it = 0 at the beginnig
-            this.score += this.scoreLines[lines] * (this.level + 1)
+            this.score += scoreLines[lines] * (this.level + 1)
             this.lines += lines
         }
     }
